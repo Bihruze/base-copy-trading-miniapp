@@ -20,7 +20,7 @@ export function TraderCard() {
       totalTrades: 156,
       followers: 2847
     },
-    riskLevel: 'medium' as const,
+    riskLevel: 'low' as const,
     lastActive: '2 hours ago'
   }
 
