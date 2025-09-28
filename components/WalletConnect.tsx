@@ -1,26 +1,24 @@
 'use client'
 
 import { useState } from 'react'
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { motion } from 'framer-motion'
-import { Wallet, LogOut, Copy, CheckCircle } from 'lucide-react'
-import { formatAddress } from '@/lib/utils'
+import { Wallet, Copy, CheckCircle } from 'lucide-react'
 
 export function WalletConnect() {
-  const { address, isConnected } = useAccount()
-  const { connect, connectors, isPending } = useConnect()
-  const { disconnect } = useDisconnect()
+  const [isConnected, setIsConnected] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  const handleCopyAddress = async () => {
-    if (address) {
-      await navigator.clipboard.writeText(address)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    }
+  const handleConnect = () => {
+    setIsConnected(true)
   }
 
-  if (isConnected && address) {
+  const handleCopyAddress = async () => {
+    await navigator.clipboard.writeText('0x1234...5678')
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  if (isConnected) {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -33,7 +31,7 @@ export function WalletConnect() {
         </div>
         
         <div className="flex items-center space-x-2 bg-muted rounded-lg px-3 py-2">
-          <span className="text-sm font-mono">{formatAddress(address)}</span>
+          <span className="text-sm font-mono">0x1234...5678</span>
           <button
             onClick={handleCopyAddress}
             className="p-1 hover:bg-muted-foreground/20 rounded"
@@ -45,13 +43,6 @@ export function WalletConnect() {
             )}
           </button>
         </div>
-        
-        <button
-          onClick={() => disconnect()}
-          className="p-2 hover:bg-destructive/10 rounded-lg transition-colors"
-        >
-          <LogOut className="w-4 h-4 text-destructive" />
-        </button>
       </motion.div>
     )
   }
@@ -71,27 +62,21 @@ export function WalletConnect() {
       </div>
 
       <div className="space-y-3">
-        {connectors.map((connector) => (
-          <button
-            key={connector.uid}
-            onClick={() => connect({ connector })}
-            disabled={isPending}
-            className="w-full flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors disabled:opacity-50"
-          >
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-base-primary/10 rounded-full flex items-center justify-center">
-                <Wallet className="w-4 h-4 text-base-primary" />
-              </div>
-              <div className="text-left">
-                <p className="font-medium">{connector.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {connector.type === 'injected' ? 'Browser Extension' : 'Mobile Wallet'}
-                </p>
-              </div>
+        <button
+          onClick={handleConnect}
+          className="w-full flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+        >
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-base-primary/10 rounded-full flex items-center justify-center">
+              <Wallet className="w-4 h-4 text-base-primary" />
             </div>
-            <div className="w-2 h-2 bg-base-primary rounded-full"></div>
-          </button>
-        ))}
+            <div className="text-left">
+              <p className="font-medium">MetaMask</p>
+              <p className="text-sm text-muted-foreground">Browser Extension</p>
+            </div>
+          </div>
+          <div className="w-2 h-2 bg-base-primary rounded-full"></div>
+        </button>
       </div>
     </motion.div>
   )
