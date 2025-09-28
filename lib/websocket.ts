@@ -1,149 +1,75 @@
-import { io, Socket } from 'socket.io-client'
-
+// Mock WebSocket service for Base Mini App
 class WebSocketService {
-  private socket: Socket | null = null
-  private reconnectAttempts = 0
-  private maxReconnectAttempts = 5
-  private reconnectDelay = 1000
+  private isConnected = false
 
   connect() {
-    if (this.socket?.connected) return
-
-    this.socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:3001', {
-      transports: ['websocket'],
-      autoConnect: true,
-    })
-
-    this.socket.on('connect', () => {
-      console.log('WebSocket connected')
-      this.reconnectAttempts = 0
-    })
-
-    this.socket.on('disconnect', () => {
-      console.log('WebSocket disconnected')
-      this.handleReconnect()
-    })
-
-    this.socket.on('connect_error', (error) => {
-      console.error('WebSocket connection error:', error)
-      this.handleReconnect()
-    })
-  }
-
-  private handleReconnect() {
-    if (this.reconnectAttempts < this.maxReconnectAttempts) {
-      this.reconnectAttempts++
-      setTimeout(() => {
-        console.log(`Attempting to reconnect... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`)
-        this.socket?.connect()
-      }, this.reconnectDelay * this.reconnectAttempts)
-    }
+    this.isConnected = true
+    console.log('WebSocket connected (mock)')
   }
 
   disconnect() {
-    if (this.socket) {
-      this.socket.disconnect()
-      this.socket = null
-    }
+    this.isConnected = false
+    console.log('WebSocket disconnected (mock)')
   }
 
-  // Market data subscriptions
   subscribeToMarketData(symbol: string, callback: (data: any) => void) {
-    if (!this.socket) return
-
-    this.socket.emit('subscribe-market', symbol)
-    this.socket.on(`market-${symbol}`, callback)
+    console.log(`Subscribed to market data for ${symbol}`)
+    // Mock data
+    setTimeout(() => {
+      callback({
+        price: 2450.50,
+        change: 2.45,
+        volume: '12.5B'
+      })
+    }, 1000)
   }
 
   unsubscribeFromMarketData(symbol: string) {
-    if (!this.socket) return
-
-    this.socket.emit('unsubscribe-market', symbol)
-    this.socket.off(`market-${symbol}`)
+    console.log(`Unsubscribed from market data for ${symbol}`)
   }
 
-  // Trader performance subscriptions
   subscribeToTraderPerformance(traderAddress: string, callback: (data: any) => void) {
-    if (!this.socket) return
-
-    this.socket.emit('subscribe-trader', traderAddress)
-    this.socket.on(`trader-${traderAddress}`, callback)
+    console.log(`Subscribed to trader performance for ${traderAddress}`)
   }
 
   unsubscribeFromTraderPerformance(traderAddress: string) {
-    if (!this.socket) return
-
-    this.socket.emit('unsubscribe-trader', traderAddress)
-    this.socket.off(`trader-${traderAddress}`)
+    console.log(`Unsubscribed from trader performance for ${traderAddress}`)
   }
 
-  // Copy trading subscriptions
   subscribeToCopyTrades(userAddress: string, callback: (data: any) => void) {
-    if (!this.socket) return
-
-    this.socket.emit('subscribe-copy-trades', userAddress)
-    this.socket.on(`copy-trades-${userAddress}`, callback)
+    console.log(`Subscribed to copy trades for ${userAddress}`)
   }
 
   unsubscribeFromCopyTrades(userAddress: string) {
-    if (!this.socket) return
-
-    this.socket.emit('unsubscribe-copy-trades', userAddress)
-    this.socket.off(`copy-trades-${userAddress}`)
+    console.log(`Unsubscribed from copy trades for ${userAddress}`)
   }
 
-  // Portfolio updates
   subscribeToPortfolio(userAddress: string, callback: (data: any) => void) {
-    if (!this.socket) return
-
-    this.socket.emit('subscribe-portfolio', userAddress)
-    this.socket.on(`portfolio-${userAddress}`, callback)
+    console.log(`Subscribed to portfolio for ${userAddress}`)
   }
 
   unsubscribeFromPortfolio(userAddress: string) {
-    if (!this.socket) return
-
-    this.socket.emit('unsubscribe-portfolio', userAddress)
-    this.socket.off(`portfolio-${userAddress}`)
+    console.log(`Unsubscribed from portfolio for ${userAddress}`)
   }
 
-  // Trade notifications
   subscribeToTradeNotifications(userAddress: string, callback: (data: any) => void) {
-    if (!this.socket) return
-
-    this.socket.emit('subscribe-notifications', userAddress)
-    this.socket.on(`notifications-${userAddress}`, callback)
+    console.log(`Subscribed to trade notifications for ${userAddress}`)
   }
 
   unsubscribeFromTradeNotifications(userAddress: string) {
-    if (!this.socket) return
-
-    this.socket.emit('unsubscribe-notifications', userAddress)
-    this.socket.off(`notifications-${userAddress}`)
+    console.log(`Unsubscribed from trade notifications for ${userAddress}`)
   }
 
-  // Send trade signal
   sendTradeSignal(traderAddress: string, tradeData: any) {
-    if (!this.socket) return
-
-    this.socket.emit('trade-signal', {
-      trader: traderAddress,
-      ...tradeData
-    })
+    console.log('Trade signal sent:', { traderAddress, tradeData })
   }
 
-  // Send copy trade execution
   sendCopyTrade(userAddress: string, tradeData: any) {
-    if (!this.socket) return
-
-    this.socket.emit('copy-trade', {
-      user: userAddress,
-      ...tradeData
-    })
+    console.log('Copy trade sent:', { userAddress, tradeData })
   }
 
-  get isConnected() {
-    return this.socket?.connected || false
+  get connected() {
+    return this.isConnected
   }
 }
 
