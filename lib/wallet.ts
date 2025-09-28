@@ -1,23 +1,9 @@
-import { createConfig, http } from 'wagmi'
-import { base, baseSepolia } from 'wagmi/chains'
-import { metaMask, walletConnect, coinbaseWallet } from 'wagmi/connectors'
+// Mock wallet configuration for Base Mini App
+export const config = {
+  chains: [],
+  connectors: [],
+  transports: {}
+}
 
-export const config = createConfig({
-  chains: [base, baseSepolia],
-  connectors: [
-    metaMask(),
-    walletConnect({
-      projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'your-project-id',
-    }),
-    coinbaseWallet({
-      appName: 'Copy Trading Pro',
-    }),
-  ],
-  transports: {
-    [base.id]: http(),
-    [baseSepolia.id]: http(),
-  },
-})
-
-export const SUPPORTED_CHAINS = [base, baseSepolia]
-export const DEFAULT_CHAIN = base
+export const SUPPORTED_CHAINS = []
+export const DEFAULT_CHAIN = null
