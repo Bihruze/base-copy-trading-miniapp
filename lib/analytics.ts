@@ -1,4 +1,4 @@
-import { format, subDays, subWeeks, subMonths } from 'date-fns'
+// import { format, subDays, subWeeks, subMonths } from 'date-fns'
 
 export interface AnalyticsData {
   portfolio: {
@@ -116,13 +116,13 @@ class AnalyticsService {
 
     switch (period) {
       case 'daily':
-        startDate = subDays(now, periods.daily)
+        startDate = new Date(now.getTime() - periods.daily * 24 * 60 * 60 * 1000)
         break
       case 'weekly':
-        startDate = subWeeks(now, periods.weekly)
+        startDate = new Date(now.getTime() - periods.weekly * 7 * 24 * 60 * 60 * 1000)
         break
       case 'monthly':
-        startDate = subMonths(now, periods.monthly)
+        startDate = new Date(now.getTime() - periods.monthly * 30 * 24 * 60 * 60 * 1000)
         break
     }
 
@@ -162,16 +162,16 @@ class AnalyticsService {
       let key: string
       switch (period) {
         case 'daily':
-          key = format(tradeDate, 'yyyy-MM-dd')
+          key = tradeDate.toISOString().split('T')[0]
           break
         case 'weekly':
-          key = format(tradeDate, 'yyyy-ww')
+          key = `${tradeDate.getFullYear()}-W${Math.ceil(tradeDate.getDate() / 7)}`
           break
         case 'monthly':
-          key = format(tradeDate, 'yyyy-MM')
+          key = `${tradeDate.getFullYear()}-${String(tradeDate.getMonth() + 1).padStart(2, '0')}`
           break
         default:
-          key = format(tradeDate, 'yyyy-MM-dd')
+          key = tradeDate.toISOString().split('T')[0]
       }
 
       if (!grouped[key]) grouped[key] = []
