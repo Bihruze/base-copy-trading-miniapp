@@ -18,6 +18,8 @@ export default function Home() {
         setIsLoading(false)
       } catch (error) {
         console.error('Failed to initialize Base Mini App:', error)
+        // Fallback for development
+        setIsReady(true)
         setIsLoading(false)
       }
     }

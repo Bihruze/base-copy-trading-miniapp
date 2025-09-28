@@ -7,7 +7,7 @@ export const config = createConfig({
   connectors: [
     metaMask(),
     walletConnect({
-      projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
+      projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'your-project-id',
     }),
     coinbaseWallet({
       appName: 'Copy Trading Pro',

@@ -1,36 +1,30 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { TrendingUp, Users, Copy, BarChart3, Wallet, Settings, Bell } from 'lucide-react'
+import { TrendingUp, Users, Copy, BarChart3, Wallet, Settings } from 'lucide-react'
 import { TraderCard } from './TraderCard'
 import { PortfolioOverview } from './PortfolioOverview'
 import { TopTraders } from './TopTraders'
 import { ActiveCopies } from './ActiveCopies'
 import { MarketOverview } from './MarketOverview'
-import { AnalyticsDashboard } from './AnalyticsDashboard'
-import { WalletConnect } from './WalletConnect'
-import { NotificationCenter } from './NotificationCenter'
-import { Trader, Portfolio } from '@/types/trading'
-import { useAccount } from 'wagmi'
+import { Portfolio } from '@/types/trading'
 
 export function Dashboard() {
-  const { isConnected } = useAccount()
   const [activeTab, setActiveTab] = useState('dashboard')
   const [portfolio, setPortfolio] = useState<Portfolio>({
-    totalValue: 0,
-    totalPnl: 0,
-    totalPnlPercent: 0,
-    activeCopies: 0,
-    totalTrades: 0,
-    winRate: 0
+    totalValue: 1250.50,
+    totalPnl: 125.30,
+    totalPnlPercent: 10.02,
+    activeCopies: 3,
+    totalTrades: 15,
+    winRate: 73.3
   })
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'traders', label: 'Traders', icon: Users },
     { id: 'copies', label: 'My Copies', icon: Copy },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'portfolio', label: 'Portfolio', icon: Wallet },
     { id: 'settings', label: 'Settings', icon: Settings }
   ]
@@ -51,14 +45,9 @@ export function Dashboard() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <NotificationCenter />
-              {isConnected ? (
-                <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium">U</span>
-                </div>
-              ) : (
-                <WalletConnect />
-              )}
+              <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+                <span className="text-sm font-medium">U</span>
+              </div>
             </div>
           </div>
         </div>
@@ -97,18 +86,10 @@ export function Dashboard() {
         >
           {activeTab === 'dashboard' && (
             <div className="space-y-6">
-              {isConnected ? (
-                <>
-                  <PortfolioOverview portfolio={portfolio} />
-                  <TopTraders />
-                  <ActiveCopies />
-                  <MarketOverview />
-                </>
-              ) : (
-                <div className="flex items-center justify-center h-64">
-                  <WalletConnect />
-                </div>
-              )}
+              <PortfolioOverview portfolio={portfolio} />
+              <TopTraders />
+              <ActiveCopies />
+              <MarketOverview />
             </div>
           )}
           
@@ -132,10 +113,6 @@ export function Dashboard() {
                 <p className="text-sm">Start following traders to see your copies here</p>
               </div>
             </div>
-          )}
-          
-          {activeTab === 'analytics' && (
-            <AnalyticsDashboard />
           )}
           
           {activeTab === 'portfolio' && (
