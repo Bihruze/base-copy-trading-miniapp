@@ -74,7 +74,13 @@ export function MarketOverview() {
                 </div>
                 <div>
                   <h3 className="font-semibold">{market.symbol}</h3>
-                  <p className="text-sm text-muted-foreground">{market.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {market.symbol === 'ETH' ? 'Ethereum' :
+                     market.symbol === 'BTC' ? 'Bitcoin' :
+                     market.symbol === 'SOL' ? 'Solana' :
+                     market.symbol === 'BASE' ? 'Base' :
+                     market.symbol === 'USDC' ? 'USD Coin' : market.symbol}
+                  </p>
                 </div>
               </div>
               
