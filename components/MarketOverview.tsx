@@ -1,43 +1,61 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { TrendingUp, TrendingDown, BarChart3 } from 'lucide-react'
+import { TrendingUp, TrendingDown, BarChart3, RefreshCw } from 'lucide-react'
+import { priceApiService, PriceData } from '@/lib/priceApi'
+import { useState, useEffect } from 'react'
 
 export function MarketOverview() {
-  const marketData = [
-    {
-      symbol: 'ETH',
-      name: 'Ethereum',
-      price: 2450.50,
-      change24h: 2.45,
-      volume: '12.5B',
-      marketCap: '295.2B'
-    },
-    {
-      symbol: 'BTC',
-      name: 'Bitcoin',
-      price: 42000.00,
-      change24h: -1.23,
-      volume: '8.7B',
-      marketCap: '820.1B'
-    },
-    {
-      symbol: 'SOL',
-      name: 'Solana',
-      price: 98.75,
-      change24h: 5.67,
-      volume: '2.1B',
-      marketCap: '42.3B'
+  const [marketData, setMarketData] = useState<PriceData[]>([])
+  const [loading, setLoading] = useState(true)
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date())
+
+  const fetchMarketData = async () => {
+    try {
+      setLoading(true)
+      const data = await priceApiService.getPriceData(['ETH', 'BTC', 'BASE', 'USDC', 'SOL'])
+      setMarketData(data)
+      setLastUpdated(new Date())
+    } catch (error) {
+      console.error('Error fetching market data:', error)
+      // Fallback to mock data
+      setMarketData([
+        { symbol: 'ETH', price: 2450.50, change24h: 2.45, changePercent24h: 2.45, volume24h: 12500000000, lastUpdated: Date.now() },
+        { symbol: 'BTC', price: 42000.00, change24h: -1.23, changePercent24h: -1.23, volume24h: 8700000000, lastUpdated: Date.now() },
+        { symbol: 'SOL', price: 98.75, change24h: 5.67, changePercent24h: 5.67, volume24h: 2100000000, lastUpdated: Date.now() },
+      ])
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
+
+  useEffect(() => {
+    fetchMarketData()
+    
+    // Update every 30 seconds
+    const interval = setInterval(fetchMarketData, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Market Overview</h2>
-        <button className="text-sm text-base-primary hover:underline">
-          View All
-        </button>
+        <div>
+          <h2 className="text-lg font-semibold">Market Overview</h2>
+          <p className="text-xs text-muted-foreground">
+            Last updated: {lastUpdated.toLocaleTimeString()}
+          </p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <button 
+            onClick={fetchMarketData}
+            disabled={loading}
+            className="text-sm text-primary hover:underline flex items-center space-x-1"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <span>Refresh</span>
+          </button>
+        </div>
       </div>
       
       <div className="space-y-3">
@@ -71,10 +89,12 @@ export function MarketOverview() {
                   <span className={`text-sm font-medium ${
                     market.change24h >= 0 ? 'text-green-600' : 'text-red-600'
                   }`}>
-                    {market.change24h >= 0 ? '+' : ''}{market.change24h.toFixed(2)}%
+                    {market.change24h >= 0 ? '+' : ''}{market.changePercent24h.toFixed(2)}%
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground">Vol: {market.volume}</p>
+                <p className="text-xs text-muted-foreground">
+                  Vol: ${(market.volume24h / 1000000000).toFixed(1)}B
+                </p>
               </div>
             </div>
           </motion.div>
