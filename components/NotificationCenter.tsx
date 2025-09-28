@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bell, X, Check, AlertTriangle, TrendingUp, TrendingDown, Copy, Info } from 'lucide-react'
 import { notificationService, NotificationData } from '@/lib/notifications'
-import { formatDistanceToNow } from 'date-fns'
+// import { formatDistanceToNow } from 'date-fns'
 
 export function NotificationCenter() {
   const [notifications, setNotifications] = useState<NotificationData[]>([])
@@ -151,7 +151,7 @@ export function NotificationCenter() {
                             {notification.message}
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}
+                            {new Date(notification.timestamp).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
