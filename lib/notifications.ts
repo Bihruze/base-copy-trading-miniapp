@@ -1,4 +1,4 @@
-import { toast } from 'react-hot-toast'
+// import { toast } from 'react-hot-toast'
 
 export interface NotificationData {
   id: string
@@ -36,49 +36,8 @@ class NotificationService {
 
   // Show toast notification
   private showToast(notification: NotificationData) {
-    const toastOptions = {
-      duration: notification.type === 'alert' ? 8000 : 4000,
-      position: 'top-right' as const,
-    }
-
-    switch (notification.type) {
-      case 'trade':
-        toast.success(notification.message, {
-          ...toastOptions,
-          icon: '📈',
-        })
-        break
-      case 'copy':
-        toast.success(notification.message, {
-          ...toastOptions,
-          icon: '🔄',
-        })
-        break
-      case 'profit':
-        toast.success(notification.message, {
-          ...toastOptions,
-          icon: '💰',
-        })
-        break
-      case 'loss':
-        toast.error(notification.message, {
-          ...toastOptions,
-          icon: '📉',
-        })
-        break
-      case 'alert':
-        toast.error(notification.message, {
-          ...toastOptions,
-          icon: '⚠️',
-        })
-        break
-      case 'info':
-        toast(notification.message, {
-          ...toastOptions,
-          icon: 'ℹ️',
-        })
-        break
-    }
+    // Mock toast notification
+    console.log('Toast notification:', notification)
   }
 
   // Get all notifications
